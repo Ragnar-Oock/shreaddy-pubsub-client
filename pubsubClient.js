@@ -10,10 +10,16 @@ export default class PubSubClient {
 
 	pendingResponses = new Map();
 
-	constructor(url) {
-		console.assert(!!url, 'socket url not defined, please provide a valid url for the socket to connect to');
+	/**
+	 * @property {String} publishUrl URL used to publish to the socket
+	 */
+	publishUrl = '';
 
-		this.socket = new WebSocket(url);
+	constructor(subscribeUrl, publishUrl) {
+		console.assert(!!subscribeUrl, 'socket url not defined, please provide a valid url for the socket to connect to');
+
+		this.publishUrl = publishUrl;
+		this.socket = new WebSocket(subscribeUrl);
 
 		this.socket.addEventListener('open', () => this.onOpen());
 		this.socket.addEventListener('close', () => this.onClose());
@@ -247,5 +253,26 @@ export default class PubSubClient {
 		}
 
 		return b();
+	}
+
+	publish(topic, body, auth) {
+		fetch(
+			`${ this.publishUrl }/${ topic }`,
+			{
+				method: 'POST',
+				headers: new Headers({
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${ auth }`
+				}),
+				body: JSON.stringify(body)
+			}
+		)
+			.then(response => console.log(response))
+			.then(data => {
+				console.log('success', data);
+			})
+			.catch(error => {
+				console.log('failed', error);
+			});
 	}
 }
