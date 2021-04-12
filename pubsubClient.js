@@ -112,7 +112,7 @@ export default class PubSubClient {
 	 * send a PING message
 	 */
 	sendPing() {
-		this.sendMessage({ 'type': 'PING' });
+		this.sendMessage('PING');
 	}
 
 	/**
