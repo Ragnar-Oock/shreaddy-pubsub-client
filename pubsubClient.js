@@ -34,7 +34,7 @@ export default class PubSubClient {
 			'socket:open',
 			'socket:close',
 			'socket:message',
-			'socket:close',
+			'socket:error',
 			'client:pong',
 			'client:message',
 			'client:response'
