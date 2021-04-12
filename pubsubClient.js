@@ -82,30 +82,34 @@ export default class PubSubClient {
 
 	/**
 	 * message reception handler
-	 * @param {Object} message message recieved by the socket
+	 * @param {Object} socketMessage message recieved by the socket
 	 */
-	onMessage(message) {
+	onMessage(socketMessage) {
 		// parse json data
-		const data = JSON.parse(message.data);
+		const messageData = JSON.parse(socketMessage.data);
 
-		switch (data.type) {
+		switch (messageData.type) {
 			case 'PONG':
 				this.emit('client:pong');
 				break;
 
 			case 'response':
-				this.processResponses(message);
-				this.emit('client:response', message);
+				this.processResponses(socketMessage);
+				this.emit('client:response', socketMessage);
+				break;
+
+			case 'MESSAGE':
+				this.emit('client:message', { 'topic': messageData.data.topic, 'message': JSON.parse(messageData.data.message) });
 				break;
 
 			default:
-				this.emit('client:message', message);
+				this.emit('client:message', messageData);
 				break;
 		}
 
 
 		// execute attached event listeners
-		this.emit('socket:message', message);
+		this.emit('socket:message', socketMessage);
 	}
 
 	/**
@@ -262,17 +266,25 @@ export default class PubSubClient {
 				method: 'POST',
 				headers: new Headers({
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${ auth }`
+					'Authorization': auth
 				}),
 				body: JSON.stringify(body)
 			}
 		)
-			.then(response => console.log(response))
+			.then(response => response.blob())
+			.then(data => data.text())
 			.then(data => {
 				console.log('success', data);
 			})
 			.catch(error => {
 				console.log('failed', error);
 			});
+	}
+
+	sendCommand(name, parameters, auth) {
+		return this.publish('commands', {
+			command: name,
+			parameters: parameters
+		}, auth);
 	}
 }
