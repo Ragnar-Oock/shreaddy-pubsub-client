@@ -2,16 +2,20 @@
   "name": "shreaddy-pubsub-client",
   "version": "1.0.0",
   "description": "a js client to connect with Shreaddy's pubsub hub",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Rägnar O'ock",
   "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^7.22.0",
-    "server": "^1.0.32"
+    "server": "^1.0.32",
+    "vite": "^2.1.5"
   },
   "dependencies": {}
 }
